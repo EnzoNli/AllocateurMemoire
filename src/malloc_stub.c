@@ -1,4 +1,5 @@
 #include "mem.h"
+#include "mem_os.h"
 #include "common.h"
 #include <stdio.h>
 #include <stdlib.h>

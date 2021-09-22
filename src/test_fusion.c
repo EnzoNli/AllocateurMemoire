@@ -63,7 +63,7 @@ static void free5(void **ptr) {
 
 int main(int argc, char *argv[]) {
     
-    printf("%ld", sizeof(void*));
+    printf("%zd", sizeof(void*));
 	void *ptr[5];
 
 	mem_init();
