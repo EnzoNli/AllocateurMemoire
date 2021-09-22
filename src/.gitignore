@@ -1,0 +1,13 @@
+# compilation files:
+*.o
+*.so
+# generated programs
+/memshell
+/test_base
+/test_cheese
+/test_fusion
+/test_init
+# temporary editor files:
+.#*
+.*~
+.*swp
