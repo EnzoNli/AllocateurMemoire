@@ -26,7 +26,7 @@ static void *alloc_max(size_t estimate) {
 int main(int argc, char *argv[]) {
 	fprintf(stderr, "Test réalisant de multiples fois une initialisation suivie d'une alloc max.\n"
 			"Définir DEBUG à la compilation pour avoir une sortie un peu plus verbeuse."
- 		"\n");
+			"\n");
 	for (int i=0; i<NB_TESTS; i++) {
 		mem_init();
 		alloc_max(get_memory_size());

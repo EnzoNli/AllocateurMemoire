@@ -21,7 +21,7 @@ static void *checked_alloc(size_t s) {
 	void *result;
 
 	assert((result = mem_alloc(s)) != NULL);
-    bzero(result,s);
+	bzero(result,s);
 	//debug("Alloced %zu bytes at %p\n", s, result);
 	return result;
 }
@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
 	mem_init();
 	fprintf(stderr, "Test réalisant récursivement une allocation en gruyère selon le modèle d'appel de fibonacci.\n"
 			"Définir DEBUG à la compilation pour avoir une sortie un peu plus verbeuse."
- 		"\n");
+			"\n");
 	for (int i=0; i<NB_TESTS; i++) {
 		debug("Issuing test number %d\n", i);
 		alloc_fun(6);

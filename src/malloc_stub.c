@@ -7,13 +7,13 @@
 static __thread int in_lib=0;
 
 #define dprintf(args...) \
-  do { \
-    if (!in_lib) { \
-      in_lib=1; \
-      printf(args); \
-      in_lib=0; \
-    } \
-  } while (0)
+    do { \
+        if (!in_lib) { \
+            in_lib=1; \
+            printf(args); \
+            in_lib=0; \
+        } \
+    } while (0)
 
 static
 void init() {
@@ -34,7 +34,7 @@ void *malloc(size_t s) {
     if (!result)
         dprintf(" Alloc FAILED !!");
     else
-	dprintf(" %lx\n", (unsigned long) result);
+        dprintf(" %lx\n", (unsigned long) result);
     return result;
 }
 

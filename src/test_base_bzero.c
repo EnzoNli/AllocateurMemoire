@@ -16,10 +16,10 @@ static int make_test() {
 	int i=0;
 	// On remplit la mémoire de blocs de taille croissante
 	debug("Issuing a sequence of size increasing mallocs, starting from 0\n");
-       	while ((i<MAX_ALLOC) && ((allocs[i] = mem_alloc(i)) != NULL)) {
-            bzero(allocs[i], i);
-            i++;
-        }
+	while ((i<MAX_ALLOC) && ((allocs[i] = mem_alloc(i)) != NULL)) {
+		bzero(allocs[i], i);
+		i++;
+	}
 	i--;
 	debug("Alloced up to %d bytes at %p\n", i, allocs[i]);
 	nb_alloc = i;
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 	mem_init();
 	fprintf(stderr, "Test réalisant des series d'allocations / désallocations en ordre LIFO\n"
 			"Définir DEBUG à la compilation pour avoir une sortie un peu plus verbeuse."
- 		"\n");
+			"\n");
 	nb_alloc = make_test();
 	for (int i=0; i<NB_TESTS; i++) {
 		// Teste si non idempotent !

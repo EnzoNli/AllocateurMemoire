@@ -26,25 +26,26 @@ static void *checked_alloc(size_t s) {
 	void *result;
 
 	assert((result = mem_alloc(s)) != NULL);
-    bzero(result,s);
+	bzero(result,s);
 	debug("Alloced %zu bytes at %p\n", s, relative_adr(result));
 	return result;
 }
 
 void *alloc_max(size_t estimate) {
-    void *result;
-    static size_t last = 0;
-    
-    while ((result = mem_alloc(estimate)) == NULL) {
-        estimate--;
-    }
-    debug("Alloced %zu bytes at %p\n", estimate, relative_adr(result));
-    if (last) {
-        // Idempotence test
-        assert(estimate == last);
-    } else
-        last = estimate;
-    return result;
+	void *result;
+	static size_t last = 0;
+	
+	while ((result = mem_alloc(estimate)) == NULL) {
+		estimate--;
+	}
+	debug("Alloced %zu bytes at %p\n", estimate, relative_adr(result));
+	if (last) {
+		// Idempotence test
+		assert(estimate == last);
+	} else {
+		last = estimate;
+	}
+	return result;
 }
 
 static void alloc5(void **ptr) {
@@ -64,14 +65,13 @@ static void free5(void **ptr) {
 
 
 int main(int argc, char *argv[]) {
-    
-    printf("%ld", sizeof(void*));
+	printf("%ld", sizeof(void*));
 	void *ptr[5];
 
 	mem_init();
 	fprintf(stderr, "Test réalisant divers cas de fusion (avant, arrière et double\n"
 			"Définir DEBUG à la compilation pour avoir une sortie un peu plus verbeuse."
- 		"\n");
+		"\n");
 	for (int i=0; i<NB_TESTS; i++) {
 		debug("Fusion avant\n");
 		alloc5(ptr);
@@ -97,6 +97,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	// TEST OK
-    printf("TEST OK!!\n");
+	printf("TEST OK!!\n");
 	return 0;
 }
