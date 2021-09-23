@@ -6,16 +6,16 @@ struct fb;
 /* -----------------------------------------------*/
 /* Interface de gestion de votre allocateur       */
 /* -----------------------------------------------*/
-//Initialisation
+// Initialisation
 void mem_init(void);
 
 // Définition du type mem_fit_function_t
 // type des fonctions d'allocation
-typedef struct fb* (mem_fit_function_t)(struct fb *, size_t);
+typedef struct fb *(mem_fit_function_t)(struct fb *, size_t);
 
 // Choix de la fonction d'allocation
 // = choix de la stratégie de l'allocation
-void mem_fit(mem_fit_function_t*);
+void mem_fit(mem_fit_function_t *);
 
 // Stratégies de base (fonctions) d'allocation
 mem_fit_function_t mem_first_fit;

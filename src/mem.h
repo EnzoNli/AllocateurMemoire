@@ -5,8 +5,8 @@
 /* -----------------------------------------------*/
 /* Interface utilisateur de votre allocateur      */
 /* -----------------------------------------------*/
-void* mem_alloc(size_t);
-void mem_free(void*);
+void *mem_alloc(size_t);
+void mem_free(void *);
 size_t mem_get_size(void *);
 
 /* Itérateur sur le contenu de l'allocateur */

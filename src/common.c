@@ -9,10 +9,6 @@
 
 static char memory[MEMORY_SIZE];
 
-void *get_memory_adr() {
-	return memory;
-}
+void *get_memory_adr() { return memory; }
 
-size_t get_memory_size() {
-	return MEMORY_SIZE;
-}
+size_t get_memory_size() { return MEMORY_SIZE; }
