@@ -24,24 +24,6 @@ Contenu de src/
 - `Makefile` simple
 - des exemples de séquences courtes d'allocations et de libérations `alloc*.in` dans `src/test_shell_sequences`. Vous pouvez les passer en redirigeant l'entrée de votre memshell.
 
-Compilation des tests
----------------------
-
-Les tests utilisent le framework Google Test (https://github.com/google/googletest) qui est un framework de test unitaire.
-
-Vous trouverez la documentation du framework ici : https://google.github.io/googletest/primer.html.
-
-Une version a été installé sur les machine de l'université dans le dossier : `XXXXXX_TODO_XXXX` et pointé
-par le makefile.
-
-Si vous travaillez sur votre propre installation vous devez compiler et installer la librairire avant usage.
-
-Soit en utilisant le makefile fournit :
-
-```sh
-make googletest
-```
-
 Compilation
 -----------
 
@@ -73,43 +55,4 @@ On peu générer une archive des sources avec :
 
 ```sh
 make archive
-```
-
---------------------
-
-Avec Google test, si vous voulez arreter GDB sur une ligne d'échec d'un test
-vous pouvez lancer le test manuellement avec l'option :
-
-```sh
-gdb ./tests/test_unit --gtest_break_on_failure
-```
-
-Vous pouvez sélection un sous test en utilisant :
-
-```sh
-./tests/test_unit --gtest_filter=unit.mem_space_get_size
-```
-
-Implémenter vos propres tests
------------------------------
-
-Vous pouvez étendez les exemples de tests unitiaire présents dans
-`src/tests/test_unit.cpp` et `src/tests/test_basic.cpp`.
-
-Pour d'autres projets : compilation de google test
---------------------------------------------------
-
-Google test peut se compiler simplement à la main :
-
-```sh
-# Téléchargement de l'archive :
-wget https://github.com/google/googletest/archive/refs/tags/release-1.12.1.tar.gz -O google-test-1.12.1.tar.gz
-# extraction
-tar -xvf google-test-1.12.1.tar.gz
-# compilation et installation dans un dossize de son home:
-mkdir build
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/usr-googletest
-make
-make install
 ```
