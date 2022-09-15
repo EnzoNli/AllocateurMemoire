@@ -5,14 +5,23 @@
 // Année  : 2022-2023
 //------------------------------------------------------------------------------
 
-#ifndef MEM_MALLOC_STUB_H
-#define MEM_MALLOC_STUB_H
+#include "mem_space.h"
 
-#include <stdlib.h>
+// Vous pouvez changer la taille de la mémoire ici,
+// si vous n'utilisez pas l'option -DMEMORY_SIZE=...
+// lors de la compilation
+#if !defined(MEMORY_SIZE)
+#define MEMORY_SIZE 4096
+#endif
 
-void *malloc(size_t s);
-void *calloc(size_t count, size_t size);
-void *realloc(void *ptr, size_t size);
-void free(void *ptr);
+static char memory[MEMORY_SIZE];
 
-#endif //MEM_MALLOC_STUB_H
+void *mem_space_get_addr()
+{
+    return memory;
+}
+
+size_t mem_space_get_size()
+{
+    return MEMORY_SIZE; 
+}

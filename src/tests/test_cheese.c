@@ -1,10 +1,16 @@
-#include "common.h"
-#include "mem.h"
-#include "mem_os.h"
+//------------------------------------------------------------------------------
+// Projet : TP CSE (malloc)
+// Cours  : Conception des systèmes d'exploitation et programmation concurrente
+// Cursus : Université Grenoble Alpes - UFRIM²AG - Master 1 - Informatique
+// Année  : 2022-2023
+//------------------------------------------------------------------------------
+
+#include "../mem_space.h"
+#include "../mem.h"
+#include "../mem_os.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <strings.h>
 
 #define NB_TESTS 5
 #define NB_MAX_STORES 100
@@ -21,7 +27,6 @@ static void *checked_alloc(size_t s) {
     void *result;
 
     assert((result = mem_alloc(s)) != NULL);
-    bzero(result, s);
     // debug("Alloced %zu bytes at %p\n", s, result);
     return result;
 }

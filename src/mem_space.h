@@ -5,14 +5,20 @@
 // Année  : 2022-2023
 //------------------------------------------------------------------------------
 
-#ifndef MEM_MALLOC_STUB_H
-#define MEM_MALLOC_STUB_H
+#ifndef MEM_SPACE_H
+#define MEM_SPACE_H
 
 #include <stdlib.h>
 
-void *malloc(size_t s);
-void *calloc(size_t count, size_t size);
-void *realloc(void *ptr, size_t size);
-void free(void *ptr);
+#if defined(DEBUG)
+#define debug(...) fprintf(stderr, __VA_ARGS__)
+#else
+#define debug(...)
+#endif
 
-#endif //MEM_MALLOC_STUB_H
+/** Retourne l'adresse de l'espace mémoire à utiliser dans l'allocateur. **/
+void *mem_space_get_addr(void);
+/** Retourne la taille de l'espace mémoire à utilier dans l'allocateur. **/
+size_t mem_space_get_size(void);
+
+#endif //MEM_SPACE_H

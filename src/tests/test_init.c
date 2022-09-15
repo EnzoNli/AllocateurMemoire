@@ -1,6 +1,13 @@
-#include "common.h"
-#include "mem.h"
-#include "mem_os.h"
+//------------------------------------------------------------------------------
+// Projet : TP CSE (malloc)
+// Cours  : Conception des systèmes d'exploitation et programmation concurrente
+// Cursus : Université Grenoble Alpes - UFRIM²AG - Master 1 - Informatique
+// Année  : 2022-2023
+//------------------------------------------------------------------------------
+
+#include "../mem_space.h"
+#include "../mem.h"
+#include "../mem_os.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,7 +38,7 @@ int main(int argc, char *argv[]) {
                     "\n");
     for (int i = 0; i < NB_TESTS; i++) {
         mem_init();
-        alloc_max(get_memory_size());
+        alloc_max(mem_space_get_size());
     }
 
     // TEST OK

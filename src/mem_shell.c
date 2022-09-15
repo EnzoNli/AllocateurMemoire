@@ -1,8 +1,17 @@
-#include "common.h"
+//------------------------------------------------------------------------------
+// Projet : TP CSE (malloc)
+// Cours  : Conception des systèmes d'exploitation et programmation concurrente
+// Cursus : Université Grenoble Alpes - UFRIM²AG - Master 1 - Informatique
+// Année  : 2022-2023
+//------------------------------------------------------------------------------
+
+#include "mem_space.h"
 #include "mem.h"
 #include "mem_os.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
+#include <string.h>
 
 #define TAILLE_BUFFER 128
 #define MAX_ALLOCATIONS 128
@@ -54,6 +63,8 @@ int main(int argc, char **argv) {
     void *allocations[MAX_ALLOCATIONS];
     int nb_alloc = 0;
 
+    memset(allocations, 0, sizeof(allocations));
+
     aide();
     mem_init();
 
@@ -71,16 +82,18 @@ int main(int argc, char **argv) {
                 printf("Echec de l'allocation\n");
             else
                 printf("Memoire allouee en %d\n",
-                       (int)(ptr - get_memory_adr()));
+                       (int)(ptr - mem_space_get_addr()));
             break;
         case 'l':
             scanf("%d", &offset);
-            mem_free(get_memory_adr() + offset);
+            mem_free(mem_space_get_addr() + offset);
             printf("Memoire liberee\n");
             break;
         case 'f':
             scanf("%d", &offset);
+            assert(offset < MAX_ALLOCATIONS);
             mem_free(allocations[offset - 1]);
+            allocations[offset - 1] = NULL;
             printf("Memoire liberee\n");
             break;
         case 'i':
@@ -94,8 +107,8 @@ int main(int argc, char **argv) {
             break;
         case 'm':
             printf("[ ");
-            adresse = get_memory_adr();
-            for (i = 0; i < get_memory_size(); i++)
+            adresse = mem_space_get_addr();
+            for (i = 0; i < mem_space_get_size(); i++)
                 printf("%d ", adresse[i]);
             printf("]\n");
             break;

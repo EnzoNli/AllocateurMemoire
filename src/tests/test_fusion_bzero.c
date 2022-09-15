@@ -1,6 +1,13 @@
-#include "common.h"
-#include "mem.h"
-#include "mem_os.h"
+//------------------------------------------------------------------------------
+// Projet : TP CSE (malloc)
+// Cours  : Conception des systèmes d'exploitation et programmation concurrente
+// Cursus : Université Grenoble Alpes - UFRIM²AG - Master 1 - Informatique
+// Année  : 2022-2023
+//------------------------------------------------------------------------------
+
+#include "../mem_space.h"
+#include "../mem.h"
+#include "../mem_os.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,7 +18,7 @@
 
 // adresse par rapport au début de la mémoire
 void *relative_adr(void *adr) {
-    return (void *)((char *)adr - (char *)get_memory_adr());
+    return (void *)((char *)adr - (char *)mem_space_get_addr());
 }
 
 void my_free(void **mem) {
@@ -53,7 +60,7 @@ static void alloc5(void **ptr) {
     ptr[1] = checked_alloc(MAX_ALLOC);
     ptr[2] = checked_alloc(MAX_ALLOC);
     ptr[3] = checked_alloc(MAX_ALLOC);
-    ptr[4] = alloc_max(get_memory_size() - 4 * MAX_ALLOC);
+    ptr[4] = alloc_max(mem_space_get_size() - 4 * MAX_ALLOC);
 }
 
 static void free5(void **ptr) {

@@ -1,5 +1,13 @@
-#if !defined(__MEM_H)
-#define __MEM_H
+//------------------------------------------------------------------------------
+// Projet : TP CSE (malloc)
+// Cours  : Conception des systèmes d'exploitation et programmation concurrente
+// Cursus : Université Grenoble Alpes - UFRIM²AG - Master 1 - Informatique
+// Année  : 2022-2023
+//------------------------------------------------------------------------------
+
+#ifndef MEM_H
+#define MEM_H
+
 #include <stddef.h>
 
 /* -----------------------------------------------*/
@@ -12,4 +20,7 @@ size_t mem_get_size(void *);
 /* Itérateur sur le contenu de l'allocateur */
 void mem_show(void (*print)(void *, size_t, int free));
 
-#endif
+/* Enable logging for debugging */
+void mem_set_logging(int enabled);
+
+#endif //MEM_H

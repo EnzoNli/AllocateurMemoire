@@ -1,6 +1,13 @@
-#include "common.h"
-#include "mem.h"
-#include "mem_os.h"
+//------------------------------------------------------------------------------
+// Projet : TP CSE (malloc)
+// Cours  : Conception des systèmes d'exploitation et programmation concurrente
+// Cursus : Université Grenoble Alpes - UFRIM²AG - Master 1 - Informatique
+// Année  : 2022-2023
+//------------------------------------------------------------------------------
+
+#include "../mem_space.h"
+#include "../mem.h"
+#include "../mem_os.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

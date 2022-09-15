@@ -1,6 +1,13 @@
-#include "common.h"
-#include "mem.h"
-#include "mem_os.h"
+//------------------------------------------------------------------------------
+// Projet : TP CSE (malloc)
+// Cours  : Conception des systèmes d'exploitation et programmation concurrente
+// Cursus : Université Grenoble Alpes - UFRIM²AG - Master 1 - Informatique
+// Année  : 2022-2023
+//------------------------------------------------------------------------------
+
+#include "../mem_space.h"
+#include "../mem.h"
+#include "../mem_os.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,13 +23,13 @@ int main(int argc, char *argv[]) {
     mem_init();
     if (argc == 2) {
         if (strcmp(argv[1], "first") == 0) {
-            mem_fit(mem_first_fit);
+            mem_set_fit_handler(mem_first_fit);
             printf("Stratégie first fit\n");
         } else if (strcmp(argv[1], "best") == 0) {
-            mem_fit(mem_best_fit);
+            mem_set_fit_handler(mem_best_fit);
             printf("Stratégie best fit\n");
         } else if (strcmp(argv[1], "worst") == 0) {
-            mem_fit(mem_worst_fit);
+            mem_set_fit_handler(mem_worst_fit);
             printf("Stratégie worst fit\n");
         }
     }
@@ -39,9 +46,9 @@ int main(int argc, char *argv[]) {
     while ((i < MAX_ALLOC) && (allocs[i] = mem_alloc(size)) != NULL) {
         printf("%d -------------------------------\n", i);
         printf("Allocation en %d\n",
-               (int)((char *)allocs[i] - (char *)get_memory_adr()));
+               (int)((char *)allocs[i] - (char *)mem_space_get_addr()));
         assert(allocs[i] <
-               (void *)((char *)get_memory_adr() + get_memory_size()));
+               (void *)((char *)mem_space_get_addr() + mem_space_get_size()));
 
         // On libère à intervalle aléatoire un bloc occupé d'adresse aléatoire
         // parmis les blocs alloué en mémoire
@@ -49,8 +56,9 @@ int main(int argc, char *argv[]) {
             free = ((rand() % (i + 1)) - 1);
             printf("Libération %d\n", free);
             assert(allocs[free] <
-                   (void *)((char *)get_memory_adr() + get_memory_size()));
+                   (void *)((char *)mem_space_get_addr() + mem_space_get_size()));
             mem_free(allocs[free]);
+            allocs[free] = NULL;
         }
         size = (rand() % MAX_BLOC) + 1;
         i++;

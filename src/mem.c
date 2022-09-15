@@ -1,31 +1,58 @@
+//------------------------------------------------------------------------------
+// Projet : TP CSE (malloc)
+// Cours  : Conception des systèmes d'exploitation et programmation concurrente
+// Cursus : Université Grenoble Alpes - UFRIM²AG - Master 1 - Informatique
+// Année  : 2022-2023
+//------------------------------------------------------------------------------
 
 #include "mem.h"
-#include "common.h"
+#include "mem_space.h"
 #include "mem_os.h"
-#include <stdio.h>
+#include <assert.h>
 
 //-------------------------------------------------------------
 // mem_init
 //-------------------------------------------------------------
+/**
+ * Initialize the memory allocator.
+ * If already init it will re-init.
+**/
 void mem_init() {
-    /* A COMPLETER */
-    return;
+    //TODO: implement
+	assert(! "NOT IMPLEMENTED !");
 }
 
 //-------------------------------------------------------------
 // mem_alloc
 //-------------------------------------------------------------
+/**
+ * Allocate a bloc of the given size.
+**/
 void *mem_alloc(size_t size) {
-    /* A COMPLETER */
+	//TODO: implement
+	assert(! "NOT IMPLEMENTED !");
     return NULL;
+}
+
+//-------------------------------------------------------------
+// mem_get_size
+//-------------------------------------------------------------
+size_t mem_get_size(void * zone)
+{
+    //TODO: implement
+	assert(! "NOT IMPLEMENTED !");
+    return 0;
 }
 
 //-------------------------------------------------------------
 // mem_free
 //-------------------------------------------------------------
+/**
+ * Free an allocaetd bloc.
+**/
 void mem_free(void *zone) {
-    /* A COMPLETER */
-    return;
+    //TODO: implement
+	assert(! "NOT IMPLEMENTED !");
 }
 
 //-------------------------------------------------------------
@@ -33,32 +60,36 @@ void mem_free(void *zone) {
 // mem_show
 //-------------------------------------------------------------
 void mem_show(void (*print)(void *, size_t, int free)) {
-    /* A COMPLETER */
-    return;
+    //TODO: implement
+	assert(! "NOT IMPLEMENTED !");
 }
 
 //-------------------------------------------------------------
 // mem_fit
 //-------------------------------------------------------------
-void mem_fit(mem_fit_function_t *mff) {
-    /* A COMPLETER */
-    return;
+void mem_set_fit_handler(mem_fit_function_t *mff) {
+	//TODO: implement
+	assert(! "NOT IMPLEMENTED !");
 }
 
 //-------------------------------------------------------------
 // Stratégies d'allocation
 //-------------------------------------------------------------
-struct fb *mem_first_fit(struct fb *head, size_t size) {
-    /* A COMPLETER */
-    return NULL;
+mem_free_block_t *mem_first_fit(mem_free_block_t *first_free_block, size_t wanted_size) {
+    //TODO: implement
+	assert(! "NOT IMPLEMENTED !");
+	return NULL;
 }
 //-------------------------------------------------------------
-struct fb *mem_best_fit(struct fb *head, size_t size) {
-    /* A COMPLETER */
-    return NULL;
+mem_free_block_t *mem_best_fit(mem_free_block_t *first_free_block, size_t wanted_size) {
+    //TODO: implement
+	assert(! "NOT IMPLEMENTED !");
+	return NULL;
 }
+
 //-------------------------------------------------------------
-struct fb *mem_worst_fit(struct fb *head, size_t size) {
-    /* A COMPLETER */
-    return NULL;
+mem_free_block_t *mem_worst_fit(mem_free_block_t *first_free_block, size_t wanted_size) {
+    //TODO: implement
+	assert(! "NOT IMPLEMENTED !");
+	return NULL;
 }
