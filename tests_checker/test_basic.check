@@ -1,0 +1,49 @@
+##################################################
+Test Initial single free block
+
+# on attends un unique bloc libre
+Expect_free_block 128000
+
+# on lance le l'appel à mem_show() et la comparaison
+Check
+
+##################################################
+Test Made one alloc => 1 alloc + 1 big free block
+
+# on fait une allocation
+Alloc 10
+
+# on attend un bloc alloué suivit d'un grand libre
+# (ou autre suivant votre algorithme)
+#-----------------  TODO -------------------------
+# A vous de préciser les tailles pour être plus précis
+#-------------------------------------------------
+Expect_busy_block
+Expect_free_block
+
+# on lance le l'appel à mem_show() et la comparaison
+Check
+
+##################################################
+Test Left fusion
+
+# On fait quelques allocations
+Alloc 10
+Alloc 10
+Alloc 10
+
+# On libère les 2 premiers blocs => fusion
+Free 1
+Free 2
+
+# On vérifie l'état
+# (a adapter à votre cas suivant les choix de vos algorithmes)
+#-----------------  TODO -------------------------
+# A vous de préciser les tailles pour être plus précis
+#-------------------------------------------------
+Expect_free_block
+Expect_busy_block
+Expect_free_block
+
+# Call check
+Check

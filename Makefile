@@ -6,21 +6,26 @@ MV=mv
 all:
 	$(MAKE) -C src
 	$(MAKE) -C tests
+	$(MAKE) -C tests_checker
 
 # nettoyer les sources
 clean:
 	$(MAKE) -C src clean
 	$(MAKE) -C tests clean
+	$(MAKE) -C tests_checker clean
 
 # compiler les tests
 tests: all
 	$(MAKE) -C tests all
+	$(MAKE) -C tests_checker all
 
 test: all
 	$(MAKE) -C tests test
+	$(MAKE) -C tests_checker test
 
 test_all: all
 	$(MAKE) -C tests test_all
+	$(MAKE) -C tests_checker test_all
 
 archive:
 	$(MAKE) -C src clean

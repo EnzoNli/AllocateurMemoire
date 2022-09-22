@@ -10,6 +10,7 @@ googletest*
 *.a
 *.so
 src/mem_shell
+src/mem_checker_shell
 tests/test_fusion
 tests/test_init
 tests/test_unit
@@ -30,4 +31,5 @@ tests_c/test_frag
 tests_c/test_fusion
 tests_c/test_fusion_bzero
 tests_c/test_init
+tests_checker/test_basic
 /build*

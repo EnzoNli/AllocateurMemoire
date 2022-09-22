@@ -22,6 +22,7 @@ INCLUDE=.
 LIB_DIR=../libs
 
 PROGRAMS=mem_shell libmalloc.so libmalloc_core_static.a 
+PROGRAMS+=mem_checker_shell
 
 .PHONY: all place_libs
 
@@ -29,6 +30,7 @@ all: $(PROGRAMS) place_libs
 
 # dépendances des binaires
 DEPS=mem.o mem_space.o
+DEPS+=mem_checker.o
 
 %:  $(DEPS) %.o
 	$(CC) -o $@ $^ $(CFLAGS)
