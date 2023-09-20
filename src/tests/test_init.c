@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
                     "\n");
     for (int i = 0; i < NB_TESTS; i++) {
         mem_init();
-        alloc_max(mem_get_size());
+        alloc_max(mem_space_get_size());
     }
 
     // TEST OK
