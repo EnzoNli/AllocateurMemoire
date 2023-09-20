@@ -27,12 +27,6 @@ test: all
 test_all: all
 	$(MAKE) -C tests test_all
 
-tests_c: all
-	$(MAKE) -C tests_c test
-
-googletest:
-	$(MAKE) -C tests googletest
-
 archive:
 	$(MAKE) -C src clean
 	$(TAR) -cvjf ../`basename $$PWD`.tar.bz2 --exclude `basename $$PWD`/`basename $$PWD` --exclude .git --exclude *.tar.bz2 --exclude *.tar.gz --exclude googletest-release-* --exclude build* --exclude googletest-usr -C .. `basename $$PWD`
