@@ -43,4 +43,4 @@ distclean: clean
 
 ###############################################################################
 #include deps
-%.c: ../src/mem_os.h ../src/mem_space.h
+%.c: ../headers/mem_os.h ../headers/mem_space.h
