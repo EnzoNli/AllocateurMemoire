@@ -40,10 +40,8 @@ libmalloc_core_static.a: $(DEPS)
 	$(AR) -rcs $@ $^
 
 place_libs: libmalloc_core_static.a libmalloc.so
-	{\
 	mkdir -p ${LIB_DIR};\
-	mv libmalloc_core_static.a libmalloc.so ${LIB_DIR};\
-	}
+	mv libmalloc_core_static.a libmalloc.so ${LIB_DIR};
 
 # test avec des programmes existant
 # création d'une librairie partagée
