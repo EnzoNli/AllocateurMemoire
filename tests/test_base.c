@@ -6,7 +6,8 @@
 
 #include "../headers/mem_space.h"
 #include "../headers/mem.h"
-#include "../headers/mem_os.h"#include <assert.h>
+#include "../headers/mem_os.h"
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
