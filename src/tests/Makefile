@@ -23,7 +23,7 @@ PROGRAMS=$(TESTS)
 all: $(PROGRAMS)
 
 %: %.c ../libmalloc_core_static.a
-	$(CC) $(CFLAGS) --std=c99 -L.. -o $@ $< -lmalloc_core_static
+	$(CC) $(CFLAGS) --std=c17 -L.. -o $@ $< -lmalloc_core_static
 
 test:
 	for file in $(TESTS);do echo; echo ================== $$file =================; echo; ./$$file || exit; done
