@@ -33,7 +33,7 @@ archive:
 	$(MV) ../`basename $$PWD`.tar.bz2 ./
 
 googletest:
-	$(MAKE) -C src googletest
+	$(MAKE) -C tests googletest
 
 distclean: clean
 	$(MAKE) -C src distclean
