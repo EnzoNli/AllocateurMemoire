@@ -18,10 +18,13 @@ CFLAGS= $(HOST32) -Wall -Werror -std=c17 -g -DMEMORY_SIZE=128000
 CFLAGS+= -DDEBUG
 LDFLAGS= $(HOST32)
 INCLUDE=.
+LIB_DIR=../libs
 
-PROGRAMS=mem_shell libmalloc.so libmalloc_core_static.a
+PROGRAMS=mem_shell libmalloc.so libmalloc_core_static.a 
 
-all: $(PROGRAMS)
+.PHONY: all place_libs
+
+all: $(PROGRAMS) place_libs
 
 # dépendances des binaires
 DEPS=mem.o mem_space.o
@@ -36,15 +39,22 @@ DEPS=mem.o mem_space.o
 libmalloc_core_static.a: $(DEPS)
 	$(AR) -rcs $@ $^
 
+place_libs: libmalloc_core_static.a libmalloc.so
+	{\
+	mkdir -p ../libs;\
+	mv libmalloc_core_static.a libmalloc.so ../libs;\
+	}
+
 # test avec des programmes existant
 # création d'une librairie partagée
 # pour MAC OS utiliser -install_name à la place de soname
 libmalloc.so: malloc_stub.o $(DEPS)
 	$(CC) -fPIC -shared -Wl,-soname,$@ $^ -o $@
 
+
 # nettoyage
 clean:
-	rm -f *.o $(PROGRAMS) $(TESTS)
+	rm -f *.o $(PROGRAMS)
 
 distclean: clean
 
