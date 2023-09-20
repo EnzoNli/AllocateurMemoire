@@ -13,8 +13,8 @@ CC=gcc
 # on Debian/Ubuntu)
 #HOST32= -m32
 
-CXXFLAGS= $(HOST32) -Wall -Werror -std=c++11 -g
-CFLAGS= $(HOST32) -Wall -Werror -std=c99 -g -DMEMORY_SIZE=128000
+CXXFLAGS= $(HOST32) -Wall -Werror -std=c++20 -g
+CFLAGS= $(HOST32) -Wall -Werror -std=c17 -g -DMEMORY_SIZE=128000
 CFLAGS+= -DDEBUG
 LDFLAGS= $(HOST32)
 INCLUDE=.
@@ -62,6 +62,7 @@ libmalloc_core_static.a: $(DEPS)
 
 # test avec des programmes existant
 # création d'une librairie partagée
+# pour MAC OS utiliser -install_name à la place de soname
 libmalloc.so: malloc_stub.o $(DEPS)
 	$(CC) -fPIC -shared -Wl,-soname,$@ $^ -o $@
 
