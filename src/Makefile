@@ -41,8 +41,8 @@ libmalloc_core_static.a: $(DEPS)
 
 place_libs: libmalloc_core_static.a libmalloc.so
 	{\
-	mkdir -p ../libs;\
-	mv libmalloc_core_static.a libmalloc.so ../libs;\
+	mkdir -p ${LIB_DIR};\
+	mv libmalloc_core_static.a libmalloc.so ${LIB_DIR};\
 	}
 
 # test avec des programmes existant
@@ -57,6 +57,7 @@ clean:
 	rm -f *.o $(PROGRAMS)
 
 distclean: clean
+	rm -rf ${LIB_DIR}
 
 # deps
 mem.c: mem.h mem_os.h mem_space.h
