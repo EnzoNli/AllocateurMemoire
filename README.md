@@ -18,7 +18,7 @@ Contenu de src/
 - `mem_shell.c` ; un interpreteur simple de commandes d'allocation et de libération 
    vous permettant de tester votre allocateur de manière intéractive
 -`mem.c` : le squelette de votre allocateur, le fichier que vous devez modifier.
-- `malloc_stub.h` et `malloc_stub.c` : utilisés pour la génération d'une bibliothèque permettant
+- `mem_malloc_stub.h` et `mem_malloc_stub.c` : utilisés pour la génération d'une bibliothèque permettant
   de remplacer la `libc` et de tester votre allocateur avec des programmes existant standard
 - des fichiers de test : `test_*.c`
 - `Makefile` simple
@@ -56,4 +56,3 @@ On peu générer une archive des sources avec :
 ```sh
 make archive
 ```
-
