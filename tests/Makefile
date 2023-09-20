@@ -31,6 +31,9 @@ test:
 test_all:
 	for file in $(TESTS);do echo "\033[0;35mRUNNING  $$file...\033[0m"; ./$$file > /dev/null 2> /dev/null && echo "\033[0;32mSUCCESS $$file\033[0m" || echo "\033[0;31mFAILURE $$file !!!\033[0m"; done
 
+googletest:
+	echo "\033[0;35mYou need the advaced branch of the project \033[0m"
+	
 clean:
 	$(RM) -f $(PROGRAMS)
 
