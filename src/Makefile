@@ -39,11 +39,8 @@ libmalloc_core_static.a: $(DEPS)
 # test avec des programmes existant
 # création d'une librairie partagée
 # pour MAC OS utiliser -install_name à la place de soname
-#libmalloc.so: malloc_stub.o $(DEPS)
-#	$(CC) -fPIC -shared -Wl,-soname,$@ $^ -o $@
 libmalloc.so: malloc_stub.o $(DEPS)
-	$(CC) -fPIC -shared -Wl,-install_name,$@ $^ -o $@
-
+	$(CC) -fPIC -shared -Wl,-soname,$@ $^ -o $@
 
 # nettoyage
 clean:
