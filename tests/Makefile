@@ -18,12 +18,13 @@ LDFLAGS=
 # targets
 TESTS=test_init test_fusion test_fusion_bzero test_frag test_base test_base_bzero test_cheese test_cheese_bzero 
 PROGRAMS=$(TESTS)
+LIB_DIR=../libs
 
 ###############################################################################
 all: $(PROGRAMS)
 
-%: %.c ../src/libmalloc_core_static.a
-	$(CC) $(CFLAGS) --std=c17 -L../libs -o $@ $< -lmalloc_core_static
+%: %.c ${LIB_DIR}/libmalloc_core_static.a
+	$(CC) $(CFLAGS) --std=c17 -L${LIB_DIR} -o $@ $< -lmalloc_core_static
 
 test:
 	for file in $(TESTS);do echo; echo ================== $$file =================; echo; ./$$file || exit; done
