@@ -30,7 +30,6 @@ static void *alloc_max(size_t estimate) {
     return result;
 }
 
-/* Ce test ne peut marcher que si la mémoire ne contient pas d'entête propre à l'allocateur */
 int main(int argc, char *argv[]) {
     fprintf(stderr, "Test réalisant de multiples fois une initialisation "
                     "suivie d'une alloc max.\n"
@@ -39,7 +38,7 @@ int main(int argc, char *argv[]) {
                     "\n");
     for (int i = 0; i < NB_TESTS; i++) {
         mem_init();
-        alloc_max(mem_space_get_size());
+        alloc_max(mem_get_size());
     }
 
     // TEST OK
