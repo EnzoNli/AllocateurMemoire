@@ -22,14 +22,14 @@ PROGRAMS=$(TESTS)
 ###############################################################################
 all: $(PROGRAMS)
 
-%: %.c ../libmalloc_core_static.a
+%: %.c ../src/libmalloc_core_static.a
 	$(CC) $(CFLAGS) --std=c17 -L.. -o $@ $< -lmalloc_core_static
 
 test:
 	for file in $(TESTS);do echo; echo ================== $$file =================; echo; ./$$file || exit; done
 
 test_all:
-	for file in $(TESTS);do echo "\e[35mRUNING  $$file...\e[0m"; ./$$file > /dev/null 2> /dev/null && echo "\e[32mSUCCESS $$file\e[0m" || echo "\e[31mFAILURE $$file !!!\e[0m"; done
+	for file in $(TESTS);do echo "\033[0;35mRUNNING  $$file...\033[0m"; ./$$file > /dev/null 2> /dev/null && echo "\033[0;32mSUCCESS $$file\033[0m" || echo "\033[0;31mFAILURE $$file !!!\033[0m"; done
 
 clean:
 	$(RM) -f $(PROGRAMS)
@@ -40,4 +40,4 @@ distclean: clean
 
 ###############################################################################
 #include deps
-%.c: ../mem_os.h ../mem_space.h
+%.c: ../src/mem_os.h ../src/mem_space.h

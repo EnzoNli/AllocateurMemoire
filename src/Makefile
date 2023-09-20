@@ -21,31 +21,7 @@ INCLUDE=.
 
 PROGRAMS=mem_shell libmalloc.so libmalloc_core_static.a
 
-TESTS_C_DIR_EXISTS=$(shell test -d tests_c && echo 1 || echo 0 )
-ifeq ($(TESTS_C_DIR_EXISTS), 1)
-	TEST_DIRS=tests tests_c
-else
-	TEST_DIRS=tests
-endif
-
-.PHONY: clean all googletest test test_all distclean $(TEST_DIRS)
-
-all: $(PROGRAMS) $(TEST_DIRS)
-
-tests:
-	$(MAKE) -C tests
-
-tests_c:
-	$(MAKE) -C tests_c
-
-googletest:
-	$(MAKE) -C tests googletest
-
-test: all
-	$(MAKE) -C tests test
-
-test_all: all
-	$(MAKE) -C tests test_all
+all: $(PROGRAMS)
 
 # dépendances des binaires
 DEPS=mem.o mem_space.o
@@ -63,19 +39,17 @@ libmalloc_core_static.a: $(DEPS)
 # test avec des programmes existant
 # création d'une librairie partagée
 # pour MAC OS utiliser -install_name à la place de soname
+#libmalloc.so: malloc_stub.o $(DEPS)
+#	$(CC) -fPIC -shared -Wl,-soname,$@ $^ -o $@
 libmalloc.so: malloc_stub.o $(DEPS)
-	$(CC) -fPIC -shared -Wl,-soname,$@ $^ -o $@
+	$(CC) -fPIC -shared -Wl,-install_name,$@ $^ -o $@
+
 
 # nettoyage
 clean:
-ifeq ($(TESTS_C_DIR_EXISTS), 1)
-	$(MAKE) -C tests_c clean
-endif
-	$(MAKE) -C tests clean
 	rm -f *.o $(PROGRAMS) $(TESTS)
 
 distclean: clean
-	$(MAKE) -C tests distclean
 
 # deps
 mem.c: mem.h mem_os.h mem_space.h
