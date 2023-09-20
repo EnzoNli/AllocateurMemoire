@@ -35,11 +35,11 @@ archive:
 googletest:
 	$(MAKE) -C tests googletest
 
-distclean: clean
+distclean: clean testclean
 	$(MAKE) -C src distclean
 
 # nettoyage
-clean:
+testclean:
 ifeq ($(TESTS_C_DIR_EXISTS), 1)
 	$(MAKE) -C tests_c clean
 endif
