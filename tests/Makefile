@@ -2,7 +2,7 @@
 ## Projet : TP CSE (malloc)
 ## Cours  : Conception des systèmes d'exploitation et programmation concurrente
 ## Cursus : Université Grenoble Alpes - UFRIM²AG - Master 1 - Informatique
-## Année  : 2022-2023
+## Année  : 2023-2024
 ##------------------------------------------------------------------------------
 
 ###############################################################################
