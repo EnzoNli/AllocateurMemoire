@@ -22,7 +22,7 @@ LIB_DIR=../libs
 
 PROGRAMS=mem_shell libmalloc.so libmalloc_core_static.a 
 
-.PHONY: all place_libs place_headers
+.PHONY: all place_libs
 
 all: $(PROGRAMS) place_libs
 
@@ -42,9 +42,6 @@ libmalloc_core_static.a: $(DEPS)
 place_libs: libmalloc_core_static.a libmalloc.so
 	mkdir -p ${LIB_DIR};\
 	mv libmalloc_core_static.a libmalloc.so ${LIB_DIR};
-
-place_headers: mem.h mem_os.h mem_space.h
-	cp $? ../headers	
 
 # test avec des programmes existant
 # création d'une librairie partagée
