@@ -12,14 +12,16 @@ endif
 # compiler les sources
 all:
 	$(MAKE) -C src
+	$(MAKE) -C tests
 
 # nettoyer les sources
 clean:
 	$(MAKE) -C src clean
+	$(MAKE) -C tests clean
 
 # compiler les tests
 tests: all
-	$(MAKE) -C tests all	
+	$(MAKE) -C tests all
 
 test: all
 	$(MAKE) -C tests test

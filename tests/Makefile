@@ -16,7 +16,7 @@ LDFLAGS=
 
 ###############################################################################
 # targets
-TESTS=test_init test_fusion test_fusion_bzero test_frag test_base test_base_bzero test_cheese test_cheese_bzero 
+TESTS=test_init test_fusion test_fusion_bzero test_frag test_base test_base_bzero test_cheese test_cheese_bzero
 PROGRAMS=$(TESTS)
 LIB_DIR=../libs
 
@@ -34,7 +34,7 @@ test_all:
 
 googletest:
 	echo "\033[0;35mYou need the advaced branch of the project \033[0m"
-	
+
 clean:
 	$(RM) -f $(PROGRAMS)
 
