@@ -2,13 +2,6 @@ MAKE=make
 TAR=tar
 MV=mv
 
-TESTS_C_DIR_EXISTS=$(shell test -d tests_c && echo 1 || echo 0 )
-ifeq ($(TESTS_C_DIR_EXISTS), 1)
-	TEST_DIRS=tests tests_c
-else
-	TEST_DIRS=tests
-endif
-
 # compiler les sources
 all:
 	$(MAKE) -C src
@@ -47,4 +40,4 @@ ifeq ($(TESTS_C_DIR_EXISTS), 1)
 endif
 	$(MAKE) -C tests clean
 
-.PHONY: clean all googletest test test_all distclean $(TEST_DIRS)
+.PHONY: clean all googletest test test_all distclean
