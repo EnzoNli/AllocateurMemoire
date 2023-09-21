@@ -4,7 +4,7 @@
 // Cursus : Université Grenoble Alpes - UFRIM²AG - Master 1 - Informatique
 //------------------------------------------------------------------------------
 
-#include "mem_space.h"
+#include "../headers/mem_space.h"
 
 // Vous pouvez changer la taille de la mémoire ici,
 // si vous n'utilisez pas l'option -DMEMORY_SIZE=...

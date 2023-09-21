@@ -61,6 +61,6 @@ distclean: clean
 	rm -rf ${LIB_DIR}
 
 # deps
-mem.c: mem.h mem_os.h mem_space.h
-mem_os.c: mem_os.h
-mem_space.c: mem_space.h
+mem.c: ../headers/mem.h ../headers/mem_os.h ../headers/mem_space.h
+mem_os.c: ../headers/mem_os.h
+mem_space.c: ../headers/mem_space.h
