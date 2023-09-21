@@ -14,7 +14,7 @@ add_definitions(-DMEMORY_SIZE=${MEMORY_SIZE})
 
 ######################################################
 # Liste les sources à compiler pour former la bibliothèque
-set(MEM_SRC mem.c mem_space.c)
+set(MEM_SRC mem.c mem_space.c mem_checker.c)
 
 ######################################################
 # Compilation des deux librairies, dynamique (pour LD_PRELOAD) et statique pour
@@ -25,4 +25,8 @@ add_library(malloc_static STATIC ${MEM_SRC})
 ######################################################
 add_executable(mem_shell mem_shell.c)
 target_link_libraries(mem_shell malloc_static)
+
+######################################################
+add_executable(mem_checker_shell mem_checker_shell.c)
+target_link_libraries(mem_checker_shell malloc_static)
 
