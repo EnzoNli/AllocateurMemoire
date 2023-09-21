@@ -8,6 +8,7 @@
 #define MEM_SPACE_H
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #if defined(DEBUG)
 #define debug(...) fprintf(stderr, __VA_ARGS__)
