@@ -11,6 +11,8 @@ googletest*
 *.so
 src/mem_shell
 src/mem_checker_shell
+src/mem_sim_shell
+src/mem_sim.c
 tests/test_fusion
 tests/test_init
 tests/test_unit

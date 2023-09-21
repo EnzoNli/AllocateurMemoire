@@ -38,6 +38,9 @@ googletest:
 distclean: clean testclean
 	$(MAKE) -C src distclean
 
+sim:
+	$(MAKE) -C src sim
+
 # nettoyage
 testclean:
 ifeq ($(TESTS_C_DIR_EXISTS), 1)

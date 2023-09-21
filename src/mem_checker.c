@@ -122,7 +122,7 @@ void mem_checker_init(mem_checker_t * checker)
 
     //init simu
     #ifdef HAS_MEM_SIM
-        mem_sim_init(&checker->simu);
+        mem_sim_init(&checker->simu, MEMORY_SIZE);
     #endif
 }
 

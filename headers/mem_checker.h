@@ -8,8 +8,6 @@
 #ifndef MEM_CHECKER_H
 #define MEM_CHECKER_H
 
-//#define HAS_MEM_SIM
-
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>

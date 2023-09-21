@@ -9,14 +9,14 @@ Exécution
 Vous pouvez simplement exécuter les tests en utilisant la commande :
 
 ```sh
-./mem_checker_shell SCRIPT_DE_TEST
+./src/mem_checker_shell SCRIPT_DE_TEST
 ```
 
 Par exemple, nous vous fournissons le script ./tests_checker/tests_basic.check.
 Vous pouvez donc lancer
 
 ```sh
-./mem_checker_shell ./tests_checker/tests_basic.check
+./src/mem_checker_shell ./tests_checker/tests_basic.check
 ```
 
 Ecriture de tests
@@ -154,7 +154,7 @@ Check
 Implementer des tests plus complexes en C
 -----------------------------------------
 
-Vous pouvez aussi regarder `test_checker.c` pour implémenter vos tests
+Vous pouvez aussi regarder `src/tests/test_checker.c` pour implémenter vos tests
 directement avec l'API C ce qui peut permettre des patterns plus complexes avec
 des boucles par exemples....
 
@@ -170,4 +170,58 @@ Dans ce cas vous pouvez ignore l'espace associé en utilisant:
 ```sh
 Expect_skip_block {SIZE} [REPEAT]
 S {SIZE} [REPEAT]
+```
+
+About the simulator
+-------------------
+
+Le checker embarque un simulateur d'allocateur permettant de prédire le comportement
+de votre allocateur en fonction de quelques paramêtres à configurer.
+
+Pour l'utiliser on doit tout d'abord définir la configuration de votre allocateur, ceci
+doit être fait une fois en début de script via la commande `Sim_set {VAR} {VALUE}`.
+
+On doit ensuite activer le simulateur avec `Sim_enable`
+
+```sh
+######## Configure the simulator
+# Define the busy block header size
+Sim_set BB_SIZE 8
+# Define the free block header size
+Sim_set FB_SIZE 16
+# Declare the space used to store data in front of the memory space.
+# Use 0 if you store the allocator state globaly outside of the segment.
+Sim_set HEADER_SIZE 0
+# Alignement enforced by the allocator
+Sim_set ALIGN_SIZE 8
+# Size of an address
+Sim_set PTR_SIZE 8
+# Strategy in use (will also change the one in the allocator)
+Sim_set STRATEGY FIRST_FIT
+# On free split, make alloc block then the free one (ALLOC_FREE or FREE_ALLOC)
+Sim_set SPLIT_STRATEGY ALLOC_FREE
+
+######## Enable the simulator
+Sim_enable
+
+######## Do test operations as before
+# ...
+```
+
+On peut alors faire des opérations et afficher la prédiction de l'allocateur.
+
+```sh
+# Configure & enable the simulator
+# Sim_set ...
+Sim_enable
+
+# Declare a test
+Test basic
+
+# Perform ten allocations
+Alloc 8 10x
+Free 2
+
+# Display the simulator expectation
+Sim_show
 ```
