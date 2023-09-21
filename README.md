@@ -56,3 +56,27 @@ On peu générer une archive des sources avec :
 ```sh
 make archive
 ```
+
+Utilisation de cmake dans la branche 'advanced'
+-----------------------------------------------
+
+Si vous utilisez la branch 'advanced' vous pouvez compiler à partir de CMake:
+
+```sh
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Debug
+make
+make test
+```
+
+Pour lancer les tests avec plus d'option utiliser `ctest`:
+
+```sh
+# tous les tests
+ctest
+# afficher les sorties
+ctest -V
+# filtrage de test
+ctest -R nom_test -V
+```
