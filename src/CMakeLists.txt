@@ -7,6 +7,7 @@
 
 ######################################################
 # Ajoute quelques options pour tous les builds
+include_directories(${CMAKE_SOURCE_DIR}/headers)
 add_compile_options(-Wall)
 add_compile_options(-Werror)
 add_definitions(-DMEMORY_SIZE=${MEMORY_SIZE})

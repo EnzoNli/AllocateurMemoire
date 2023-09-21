@@ -7,6 +7,7 @@
 
 ######################################################
 # include
+include_directories(${CMAKE_SOURCE_DIR}/headers)
 include_directories(${GTEST_INCLUDE_DIR})
 
 ######################################################
