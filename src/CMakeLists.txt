@@ -10,6 +10,7 @@
 include_directories(${CMAKE_SOURCE_DIR}/headers)
 add_compile_options(-Wall)
 add_compile_options(-Werror)
+add_definitions(-DHAS_MEM_SIM)
 add_definitions(-DMEMORY_SIZE=${MEMORY_SIZE})
 
 ######################################################
@@ -21,6 +22,7 @@ set(MEM_SRC mem.c mem_space.c mem_checker.c)
 # les tests
 add_library(malloc SHARED ${MEM_SRC} malloc_stub.c)
 add_library(malloc_static STATIC ${MEM_SRC})
+target_link_libraries(malloc_static ${CMAKE_SOURCE_DIR}/libs/libmalloc_sim_Linux_x86_64.a)
 
 ######################################################
 add_executable(mem_shell mem_shell.c)
