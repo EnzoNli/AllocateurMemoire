@@ -16,6 +16,7 @@ CC=gcc
 CXXFLAGS= $(HOST32) -Wall -Werror -std=c++20 -g
 CFLAGS= $(HOST32) -Wall -Werror -std=c17 -g -DMEMORY_SIZE=128000
 CFLAGS+= -DDEBUG
+CFLAGS+= -I../headers
 LDFLAGS= $(HOST32)
 INCLUDE=.
 LIB_DIR=../libs

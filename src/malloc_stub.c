@@ -4,9 +4,9 @@
 // Cursus : Université Grenoble Alpes - UFRIM²AG - Master 1 - Informatique
 //------------------------------------------------------------------------------
 
-#include "../headers/mem_space.h"
-#include "../headers/mem.h"
-#include "../headers/mem_os.h"
+#include "mem_space.h"
+#include "mem.h"
+#include "mem_os.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
