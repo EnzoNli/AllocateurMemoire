@@ -9,6 +9,24 @@
 #include "mem_os.h"
 #include <assert.h>
 
+typedef struct mem_free_block_s {
+	size_t taille;
+	void *ptr_next_free;
+} mem_free_block_t;
+
+typedef struct mem_busy_block_s {
+	size_t taille;
+} mem_busy_block_t;
+
+typedef struct allocator_s {
+	void *first_free_block;
+	void *actual_fit_function;
+	void *debut_mem;
+	size_t taille_tot;
+} allocator_t;
+
+allocator_t* gbl_alloc=NULL;
+
 //-------------------------------------------------------------
 // mem_init
 //-------------------------------------------------------------
@@ -17,8 +35,12 @@
  * If already init it will re-init.
 **/
 void mem_init() {
-    //TODO: implement
-	assert(! "NOT IMPLEMENTED !");
+	gbl_alloc = mem_space_get_addr();
+	mem_free_block_t *first = (mem_free_block_t *) (gbl_alloc + 1);
+	gbl_alloc->first_free_block = first;
+	gbl_alloc->actual_fit_function = NULL;
+	gbl_alloc->debut_mem = mem_space_get_addr();
+	gbl_alloc->taille_tot = mem_space_get_size();
 }
 
 //-------------------------------------------------------------
