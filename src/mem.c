@@ -48,15 +48,17 @@ void mem_init() {
 	gbl_alloc = mem_space_get_addr();
 
 	// on crée le premier bloc de mémoire libre
-	mem_free_block_t *first = (mem_free_block_t *) (gbl_alloc + 1);
-	first->taille = mem_space_get_size() - sizeof(gbl_alloc);
+	mem_free_block_t *first = (mem_free_block_t *) (gbl_alloc + sizeof(allocator_t));
+	first->taille = mem_space_get_size() - sizeof(allocator_t);
 	first->ptr_next_free = NULL;
+
 
 	// On initialise tous les attributs de l'allocateur
 	gbl_alloc->first_free_block = first;
 	gbl_alloc->actual_fit_function = &mem_first_fit;
 	gbl_alloc->debut_mem = mem_space_get_addr();
 	gbl_alloc->taille_tot = mem_space_get_size();
+	printf("adresse gbl_alloc = %p, adresse first free block = %p", gbl_alloc, gbl_alloc->first_free_block);
 }
 
 //-------------------------------------------------------------
@@ -105,8 +107,30 @@ void mem_free(void *zone) {
 // mem_show
 //-------------------------------------------------------------
 void mem_show(void (*print)(void *, size_t, int free)) {
-    //TODO: implement
-	assert(! "NOT IMPLEMENTED !");
+    void *adresse_test = mem_space_get_addr() + sizeof(allocator_t);
+	mem_free_block_t *block_courant_libre = gbl_alloc->first_free_block;
+	//mem_busy_block_t *block_courant_alloue;
+
+	printf("adresse_test: %p, block_courant_libre: %p", adresse_test, block_courant_libre);
+	/*
+	while (adresse_test <= mem_space_get_addr() + gbl_alloc->taille_tot){
+		if(adresse_test == block_courant_libre){
+			print(block_courant_libre, block_courant_libre->taille, 1);
+			if(block_courant_libre + block_courant_libre->taille == block_courant_libre->ptr_next_free){
+				adresse_test = block_courant_libre->ptr_next_free;
+				block_courant_libre = block_courant_libre->ptr_next_free;
+			} else {
+				adresse_test = block_courant_libre->ptr_next_free;
+				block_courant_alloue = (void *) block_courant_libre + block_courant_libre->taille;
+			}
+		} else {
+			print(block_courant_alloue, block_courant_alloue->taille, 0);
+			block_courant_alloue = adresse_test;
+			adresse_test = block_courant_alloue + block_courant_alloue->taille;
+
+		}
+	}
+	*/
 }
 
 //-------------------------------------------------------------
@@ -120,6 +144,11 @@ void mem_set_fit_handler(mem_fit_function_t *mff) {
 // Stratégies d'allocation
 //-------------------------------------------------------------
 mem_free_block_t *mem_first_fit(mem_free_block_t *first_free_block, size_t wanted_size) {
+	// Si on essaye d'allouer un espace plus grand que la mémoire totale => impossible
+	if(wanted_size > gbl_alloc->taille_tot){
+		return NULL;
+	}
+
     mem_free_block_t *current_block = first_free_block;
     
     while (current_block != NULL) {
