@@ -44,8 +44,9 @@ allocator_t* gbl_alloc=NULL;
  * If already init it will re-init.
 **/
 void mem_init() {
-	// On stocke l'allocateur à l'adresse 0
+	// On stocke l'allocateur à l'adresse "0" de notre mémoire
 	gbl_alloc = mem_space_get_addr();
+
 
 	// on crée le premier bloc de mémoire libre
 	mem_free_block_t *first = (mem_free_block_t *) (gbl_alloc + 1);
@@ -67,23 +68,34 @@ void mem_init() {
  * Allocate a bloc of the given size.
 **/
 void *mem_alloc(size_t size) {
-	// TODO: Mettre à jour le premier bloc libre dans gbl_alloc
-	mem_free_block_t *block_address = gbl_alloc->actual_fit_function(gbl_alloc->first_free_block, size + sizeof(mem_busy_block_t));
-	if(block_address != NULL){
-		size_t ancienne_taille = block_address->taille_total;
+    // Taille tot nécessaire pour le bloc alloué, y compris l'en-tête
+    size_t total_size = size + sizeof(mem_busy_block_t);
 
-		// On crée "l'en-tete" du bloc alloué
-		mem_busy_block_t *busy_block = (mem_busy_block_t *)block_address;
-		busy_block->taille_total = size + sizeof(mem_busy_block_t);
+    // Recherche du bloc libre assez grand
+    mem_free_block_t *free_block = gbl_alloc->actual_fit_function(gbl_alloc->first_free_block, total_size);
 
-		mem_free_block_t *new_free_block = (mem_free_block_t *) (busy_block + 1);
-		new_free_block->taille_total = ancienne_taille - (size + sizeof(mem_busy_block_t));
-		new_free_block->ptr_next_free = NULL;
-		gbl_alloc->first_free_block = new_free_block;
+    if (free_block != NULL) {
+        // Si le bloc est plus grand que nécessaire, il faut le diviser
+        if (free_block->taille_total > total_size) {
+            mem_free_block_t *new_free_block = (mem_free_block_t *)((void *)free_block + total_size);
+            new_free_block->taille_total = free_block->taille_total - total_size;
+            new_free_block->ptr_next_free = free_block->ptr_next_free;
+            free_block->taille_total = total_size;
+            free_block->ptr_next_free = new_free_block;
+        }
 
-		// On donne à l'utilisateur l'adresse du bloc alloué (sans l'en-tête du bloc)
-		return (void *)(busy_block + sizeof(mem_busy_block_t));
-	}
+        // Marquer le bloc libre comme alloué
+        mem_busy_block_t *busy_block = (mem_busy_block_t *)free_block;
+        busy_block->taille_total = total_size;
+
+        // Met à jour le pointeur global du premier bloc libre
+        gbl_alloc->first_free_block = free_block->ptr_next_free;
+
+        // Renvoie l'adresse du bloc alloué (sans l'en-tête)
+        return (void *)(busy_block + 1);
+    }
+
+    // Aucun bloc libre assez grand n'a été trouvé
     return NULL;
 }
 
@@ -104,40 +116,9 @@ size_t mem_get_size(void * zone)
  * Free an allocaetd bloc.
 **/
 void mem_free(void *zone) {
-    //TODO: implement
-	assert(! "NOT IMPLEMENTED !");
+	
 }
 
-//-------------------------------------------------------------
-// Itérateur(parcours) sur le contenu de l'allocateur
-// mem_show
-//-------------------------------------------------------------
-
-/*
-void mem_show(void (*print)(void *, size_t, int free)) {
-    void *curseur = gbl_alloc + 1;
-	mem_free_block_t *block_courant_libre = gbl_alloc->first_free_block;
-	mem_busy_block_t *block_courant_alloue;
-
-
-	while (curseur <= mem_space_get_addr() + gbl_alloc->taille_tot){
-		if(curseur == block_courant_libre){
-			print(block_courant_libre, block_courant_libre->taille, 1);
-			if(block_courant_libre + block_courant_libre->taille == block_courant_libre->ptr_next_free){
-				curseur = block_courant_libre->ptr_next_free;
-				block_courant_libre = block_courant_libre->ptr_next_free;
-			} else {
-				curseur = block_courant_libre->ptr_next_free;
-				block_courant_alloue = (void *) block_courant_libre + block_courant_libre->taille;
-			}
-		} else {
-			block_courant_alloue = curseur;
-			print(block_courant_alloue, block_courant_alloue->taille, 0);
-			curseur = block_courant_alloue + block_courant_alloue->taille;
-		}
-	}
-}
-*/
 
 int mem_is_free(void *ptr){
 	void *curseur_blocks_libres = (void *) gbl_alloc->first_free_block;
@@ -160,6 +141,11 @@ int mem_is_free(void *ptr){
 	return 0;
 }
 
+
+//-------------------------------------------------------------
+// Itérateur(parcours) sur le contenu de l'allocateur
+// mem_show
+//-------------------------------------------------------------
 void mem_show(void (*print)(void *, size_t, int free)) {
     void *curseur = mem_space_get_addr() + sizeof(allocator_t);
 	while(curseur < mem_space_get_addr() + gbl_alloc->taille_tot_mem){
