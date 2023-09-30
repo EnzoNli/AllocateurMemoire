@@ -61,6 +61,26 @@ void mem_init() {
 	gbl_alloc->taille_tot_mem = mem_space_get_size();
 }
 
+int mem_is_free(void *ptr){
+	void *curseur_blocks_libres = (void *) gbl_alloc->first_free_block;
+
+	// Parcours de toute la mémoire
+	while(curseur_blocks_libres != NULL){
+		// Si on depasse le bloc libre actuel => ptr est alloué
+		if(ptr < curseur_blocks_libres){
+			return 0;
+		}
+
+		if(ptr == curseur_blocks_libres){
+			return 1;
+		}
+
+		// Passage au prochaine bloc libre
+		curseur_blocks_libres = ((mem_free_block_t *) curseur_blocks_libres)->ptr_next_free;
+	}
+
+	return 0;
+}
 //-------------------------------------------------------------
 // mem_alloc
 //-------------------------------------------------------------
@@ -82,33 +102,59 @@ void *mem_alloc(size_t size) {
             new_free_block->ptr_next_free = free_block->ptr_next_free;
             free_block->taille_total = total_size;
             free_block->ptr_next_free = new_free_block;
-        }
 
+			// si le bloc que je vais allouer est le premier libre alors l'espace en plus devient le nouveau premier libre
+			if(free_block==gbl_alloc->first_free_block){
+				gbl_alloc->first_free_block = new_free_block;
+			}
+			//sinon le bloque libre précédent le bloque à alloué prend pour suivant cette espace libre en plus
+			else{
+				mem_free_block_t *curseur_blocks_libres = gbl_alloc->first_free_block;
+				while((mem_free_block_t*)(curseur_blocks_libres->ptr_next_free)<free_block){
+					curseur_blocks_libres=curseur_blocks_libres->ptr_next_free;
+				}
+				curseur_blocks_libres->ptr_next_free=new_free_block;
+			}
+
+        }
+		// si le bloc que je veux allouer est le premier libre je met à jour l'adresse du premier libre de l'allocateur
+		else if(free_block==gbl_alloc->first_free_block){
+			gbl_alloc->first_free_block = free_block->ptr_next_free;
+		}
         // Marquer le bloc libre comme alloué
         mem_busy_block_t *busy_block = (mem_busy_block_t *)free_block;
         busy_block->taille_total = total_size;
-
-        // Met à jour le pointeur global du premier bloc libre
-        gbl_alloc->first_free_block = free_block->ptr_next_free;
-
         // Renvoie l'adresse du bloc alloué (sans l'en-tête)
         return (void *)(busy_block + 1);
     }
-
     // Aucun bloc libre assez grand n'a été trouvé
     return NULL;
 }
-
 //-------------------------------------------------------------
 // mem_get_size
 //-------------------------------------------------------------
-size_t mem_get_size(void * zone)
-{
-    //TODO: implement
-	assert(! "NOT IMPLEMENTED !");
-    return 0;
+size_t mem_get_size(void * zone){
+	// est ce que si espace libre après espace donné doit renvoyer l'addition de deux ?
+	size_t espace;
+	if (mem_is_free(zone)==0){
+		mem_free_block_t* zone_testl=(mem_free_block_t*)zone;
+		espace=zone_testl->taille_total;
+		while(mem_is_free(zone_testl+zone_testl->taille_total)==0){
+			zone_testl=zone_testl+zone_testl->taille_total;
+			espace+=zone_testl->taille_total;
+		}
+	}
+	else{
+		mem_busy_block_t* zone_testb=(mem_busy_block_t*)zone;
+		espace=zone_testb->taille_total;
+		while(mem_is_free(zone_testb+zone_testb->taille_total)==0){
+			zone_testb=zone_testb+zone_testb->taille_total;
+			espace+=zone_testb->taille_total;
+		}
+	}
+	return espace;
+    
 }
-
 //-------------------------------------------------------------
 // mem_free
 //-------------------------------------------------------------
@@ -118,29 +164,6 @@ size_t mem_get_size(void * zone)
 void mem_free(void *zone) {
 	
 }
-
-
-int mem_is_free(void *ptr){
-	void *curseur_blocks_libres = (void *) gbl_alloc->first_free_block;
-
-	// Parcours de toute la mémoire
-	while(curseur_blocks_libres != NULL){
-		// Si on depasse le bloc libre actuel => ptr est alloué
-		if(ptr < curseur_blocks_libres){
-			return 0;
-		}
-
-		if(ptr == curseur_blocks_libres){
-			return 1;
-		}
-
-		// Passage au prochaine bloc libre
-		curseur_blocks_libres = ((mem_free_block_t *) curseur_blocks_libres)->ptr_next_free;
-	}
-
-	return 0;
-}
-
 
 //-------------------------------------------------------------
 // Itérateur(parcours) sur le contenu de l'allocateur
@@ -192,9 +215,33 @@ mem_free_block_t *mem_first_fit(mem_free_block_t *first_free_block, size_t wante
 }
 //-------------------------------------------------------------
 mem_free_block_t *mem_best_fit(mem_free_block_t *first_free_block, size_t wanted_size) {
-    //TODO: implement
-	assert(! "NOT IMPLEMENTED !");
-	return NULL;
+	mem_free_block_t *best_block;
+    if(wanted_size > gbl_alloc->taille_tot_mem){
+		return NULL;
+	}
+
+    mem_free_block_t *current_block = first_free_block;
+    // on recupère le premier bloque assez grand
+    while (current_block != NULL && current_block->taille_total< wanted_size) {
+        current_block = current_block->ptr_next_free;
+    }
+	if(current_block != NULL){
+	best_block = current_block;
+	current_block = current_block->ptr_next_free;
+	}
+	else{
+		printf("Place insuffisante!!!");
+    	return NULL;
+	}
+	while (current_block != NULL) {
+        // Vérifie si le bloc courant est suffisamment grand pour la taille demandée 
+		//et est plus petit que le bloc assez grand précédent
+        if (current_block->taille_total >= wanted_size && current_block->taille_total<best_block->taille_total) {
+            best_block=current_block;
+        }
+        current_block = current_block->ptr_next_free;
+    }
+	return best_block;
 }
 
 //-------------------------------------------------------------
