@@ -246,7 +246,35 @@ mem_free_block_t *mem_best_fit(mem_free_block_t *first_free_block, size_t wanted
 
 //-------------------------------------------------------------
 mem_free_block_t *mem_worst_fit(mem_free_block_t *first_free_block, size_t wanted_size) {
-    //TODO: implement
-	assert(! "NOT IMPLEMENTED !");
-	return NULL;
+	if(wanted_size > gbl_alloc->taille_tot_mem){
+		return NULL;
+	}
+
+    mem_free_block_t *current_block = first_free_block;
+	mem_free_block_t *best_block;
+
+	// on recupère le premier bloque assez grand
+    while (current_block != NULL && current_block->taille_total< wanted_size) {
+        current_block = current_block->ptr_next_free;
+    }
+	// si il existe il est pour l'instant le bloque choisi pour allouer l'espace demandé
+	if(current_block != NULL){
+	best_block = current_block;
+	current_block = current_block->ptr_next_free;
+	}
+	// sinon c'est que aucun espace libre ne permet d'allouer la place demandé
+	else{
+		printf("Place insuffisante!!!");
+    	return NULL;
+	}
+    // on parcours l'ensemble des bloques libres à la recherche du plus grand pouvant stoqué l'espace demandé
+    while (current_block != NULL) {
+        //  si le bloc courant est plus grand que le plus grand actuel alors il devient le bloque le plus grand
+        if (current_block->taille_total>best_block->taille_total ) {
+			best_block= current_block;
+        }
+		//puis on regarde le bloque libre suivant
+        current_block = current_block->ptr_next_free;
+    }
+	return best_block;
 }
