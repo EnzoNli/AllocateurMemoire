@@ -56,7 +56,7 @@ void mem_init() {
 
 	// On initialise tous les attributs de l'allocateur
 	gbl_alloc->first_free_block = first;
-	gbl_alloc->actual_fit_function = &mem_first_fit;
+	gbl_alloc->actual_fit_function = &mem_first_fit; //ici qu'on change ??
 	gbl_alloc->debut_mem = mem_space_get_addr() + sizeof(allocator_t);
 	gbl_alloc->taille_tot_mem = mem_space_get_size();
 }
@@ -92,6 +92,7 @@ void *mem_alloc(size_t size) {
     size_t total_size = size + sizeof(mem_busy_block_t);
 
     // Recherche du bloc libre assez grand
+	//mem_set_fit_handler(mem_fit_function_t *mff);
     mem_free_block_t *free_block = gbl_alloc->actual_fit_function(gbl_alloc->first_free_block, total_size);
 
     if (free_block != NULL) {
@@ -99,14 +100,15 @@ void *mem_alloc(size_t size) {
 		if(free_block->taille_total - (total_size) < sizeof(mem_free_block_t)){
 			total_size=free_block->taille_total;
 		}
-
         // Si le bloc est plus grand que nécessaire, il faut le diviser
         if (free_block->taille_total > total_size) {
             mem_free_block_t *new_free_block = (mem_free_block_t *)((void *)free_block + total_size);
+
+			printf("adresse free_block: %ld\n", (long int)free_block - (long int) mem_space_get_addr());
+			printf("adresse new_free_block: %ld\n", (long int)new_free_block - (long int) mem_space_get_addr());
+
             new_free_block->taille_total = free_block->taille_total - total_size;
             new_free_block->ptr_next_free = free_block->ptr_next_free;
-            free_block->taille_total = total_size;
-            free_block->ptr_next_free = new_free_block;
 
 			// si le bloc que je vais allouer est le premier libre alors l'espace en plus devient le nouveau premier libre
 			if(free_block==gbl_alloc->first_free_block){
@@ -152,10 +154,10 @@ void *mem_alloc(size_t size) {
 size_t mem_get_size(void * zone){
 	// est ce que si espace libre après espace donné doit renvoyer l'addition de deux ?
 	size_t espace;
-	if (mem_is_free(zone)==0){
+	if (mem_is_free(zone)==1){
 		mem_free_block_t* zone_testl=(mem_free_block_t*)zone;
 		espace=zone_testl->taille_total;
-		while(mem_is_free(zone_testl+zone_testl->taille_total)==0){
+		while(mem_is_free(zone_testl+zone_testl->taille_total)==1){
 			zone_testl=zone_testl+zone_testl->taille_total;
 			espace+=zone_testl->taille_total;
 		}
@@ -163,7 +165,7 @@ size_t mem_get_size(void * zone){
 	else{
 		mem_busy_block_t* zone_testb=(mem_busy_block_t*)zone;
 		espace=zone_testb->taille_total;
-		while(mem_is_free(zone_testb+zone_testb->taille_total)==0){
+		while(mem_is_free(zone_testb+zone_testb->taille_total)==1){
 			zone_testb=zone_testb+zone_testb->taille_total;
 			espace+=zone_testb->taille_total;
 		}
@@ -171,7 +173,89 @@ size_t mem_get_size(void * zone){
 	return espace;
     
 }
-// Fusionne les blocs libres adjacents s'ils existent
+//-------------------------------------------------------------
+// mem_free
+//-------------------------------------------------------------
+/**
+ * Free an allocaetd bloc.
+**/
+/*void mem_free(void *zone) {
+	size_t total_size; 
+	mem_free_block_t *first_free_block=gbl_alloc->first_free_block;
+	if(mem_is_free(zone)==0){
+		mem_busy_block_t *a_liberer=(mem_busy_block_t *)(zone-sizeof(mem_busy_block_t));
+		mem_free_block_t *free_block = (mem_free_block_t *)a_liberer;
+		mem_free_block_t *prochainlb;
+		total_size=a_liberer->taille_total;//pas sur de ça 
+		//total_size=*(a_liberer);
+		// si il y aucun bloque libre précendent le bloque à liberer
+		if(first_free_block>free_block){
+			//si le bloque suivant celui à libéré est libre
+			if(mem_is_free(a_liberer+total_size)==1){
+				total_size+=first_free_block->taille_total;
+				//free_block->taille_total=first_free_block->taille_total+total_size;
+				//free_block->ptr_next_free=gbl_alloc->first_free_block->ptr_next_free;
+				prochainlb=first_free_block->ptr_next_free;
+				gbl_alloc->first_free_block=a_liberer;
+			}
+			else{
+				//free_block->ptr_next_free=gbl_alloc->first_free_block;
+				prochainlb=first_free_block;
+				gbl_alloc->first_free_block=a_liberer;
+			}
+
+		}
+		else{
+			mem_free_block_t *curs_lib=first_free_block;
+			//je recupere le dernier bloque libre précédent le bloque à liberer
+			while(curs_lib->ptr_next_free<a_liberer){
+				curs_lib=curs_lib->ptr_next_free;
+			}
+			//si le precedent est libre
+			if(curs_lib+curs_lib->taille_total==a_liberer){
+				total_size+=curs_lib->taille_total;
+				a_liberer=a_liberer-curs_lib->taille_total; 
+				//et le suivant est libre
+				if(a_liberer+total_size==curs_lib->ptr_next_free){
+					
+					mem_free_block_t *prochain = (mem_free_block_t *)(curs_lib->ptr_next_free);
+					total_size+=prochain->taille_total;
+					prochainlb=prochain->ptr_next_free;
+					//free_block=curs_lib;
+					//free_block->taille_total=curs_lib->taille_total+total_size+prochain->taille_total;
+				}
+				// et le suivant est occupé
+				else{
+					prochainlb=curs_lib->ptr_next_free;
+				}
+			}
+			//si le précédent est occupé
+			else{
+				//et le suivant libre
+				if(a_liberer+total_size==curs_lib->ptr_next_free){
+					mem_free_block_t *prochain = (mem_free_block_t *)(curs_lib->ptr_next_free);
+					total_size+=prochain->taille_total;
+					prochainlb=prochain->ptr_next_free;
+					curs_lib->ptr_next_free=a_liberer;
+
+				}
+				// et le suivant est occupé
+				else{
+					prochainlb=curs_lib->ptr_next_free;
+					curs_lib->ptr_next_free=a_liberer;
+
+				}
+
+			}
+		}
+		// Marquer le bloc alloué comme libre
+        
+        free_block->taille_total = total_size;
+		free_block->ptr_next_free=prochainlb;
+	}
+	
+	
+}*/
 void fusion_blocs_libres(mem_free_block_t *free_block){
     mem_free_block_t *current_block = gbl_alloc->first_free_block;
     mem_free_block_t *prev_block = NULL;
@@ -179,13 +263,21 @@ void fusion_blocs_libres(mem_free_block_t *free_block){
 
     while (current_block != NULL) {
 		// Fusion gauche
+		printf("fusion current: %ld\n",  (long int) current_block);
+		printf("fusion current size: %ld\n", current_block->taille_total);
+		printf("fusion free block: %ld\n\n",  (long int) free_block);
+
         if ((void *)current_block + current_block->taille_total == (void *)free_block) {
             // Fusionne avec le bloc libre suivant
+			//free_block = free_block-current_block->taille_total;
+			//free_block->taille_total+=current_block->taille_total;
             current_block->taille_total += free_block->taille_total;
+			current_block->ptr_next_free=free_block->ptr_next_free;
             free_block = current_block;
 			
 		// Fusion droite
-        } else if ((void *)free_block + free_block->taille_total == (void *)current_block) {
+        }
+		if ((void *)free_block + free_block->taille_total == (void *)current_block) {
             // Fusionne avec le bloc libre précédent
             free_block->taille_total += current_block->taille_total;
 
@@ -194,7 +286,10 @@ void fusion_blocs_libres(mem_free_block_t *free_block){
 				while(prec->ptr_next_free<(void *)free_block){
 					prec=prec->ptr_next_free;
 				}
-				prec->ptr_next_free=free_block;
+				if(prec!=free_block){
+					prec->ptr_next_free=free_block;
+				}
+				//prec->ptr_next_free=free_block;
 				
                 //prev_block->ptr_next_free = current_block->ptr_next_free;
 				free_block->ptr_next_free=current_block->ptr_next_free;
@@ -206,12 +301,17 @@ void fusion_blocs_libres(mem_free_block_t *free_block){
 
         prev_block = current_block;
         current_block = current_block->ptr_next_free;
-		printf("%ld\n", (unsigned long) current_block);
     }
 }
 
 
 void mem_free(void *zone) {
+
+	if (zone == NULL || mem_is_free(zone - sizeof(mem_busy_block_t))) {
+        // Ne rien faire, la zone est déjà un bloc libre
+        return;
+    }
+
     // Récupère l'adresse du header du bloc occupé
     mem_busy_block_t *busy_block = (mem_busy_block_t *)(zone - sizeof(mem_busy_block_t));
 	mem_free_block_t *prev_block = gbl_alloc->first_free_block;
@@ -234,9 +334,9 @@ void mem_free(void *zone) {
     	free_block->ptr_next_free = prev_block->ptr_next_free;
 		prev_block->ptr_next_free = free_block;
 
-		if(gbl_alloc->first_free_block > free_block){
+		/*if(gbl_alloc->first_free_block > free_block){
     		gbl_alloc->first_free_block = free_block;
-		}
+		}*/
 
     	fusion_blocs_libres(free_block);
 	}else{
@@ -245,6 +345,7 @@ void mem_free(void *zone) {
 	}
 
 }
+
 
 //-------------------------------------------------------------
 // Itérateur(parcours) sur le contenu de l'allocateur
@@ -303,7 +404,7 @@ mem_free_block_t *mem_best_fit(mem_free_block_t *first_free_block, size_t wanted
 
     mem_free_block_t *current_block = first_free_block;
     // on recupère le premier bloque assez grand
-    while (current_block != NULL && current_block->taille_total< wanted_size) {
+    while (current_block != NULL && current_block->taille_total < wanted_size) {
         current_block = current_block->ptr_next_free;
     }
 	if(current_block != NULL){
@@ -311,13 +412,13 @@ mem_free_block_t *mem_best_fit(mem_free_block_t *first_free_block, size_t wanted
 	current_block = current_block->ptr_next_free;
 	}
 	else{
-		printf("Place insuffisante!!!\n");
+		printf("Place insuffisante!!!");
     	return NULL;
 	}
 	while (current_block != NULL) {
         // Vérifie si le bloc courant est suffisamment grand pour la taille demandée 
 		//et est plus petit que le bloc assez grand précédent
-        if (current_block->taille_total >= wanted_size && current_block->taille_total<best_block->taille_total) {
+        if (current_block->taille_total >= wanted_size && current_block->taille_total < best_block->taille_total) {
             best_block=current_block;
         }
         current_block = current_block->ptr_next_free;
