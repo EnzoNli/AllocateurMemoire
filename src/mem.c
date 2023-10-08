@@ -270,6 +270,43 @@ void mem_free(void *zone) {
   }
 }
 
+void *mem_realloc(void *ptr, size_t taille) {
+  // Si size = zéro, cela équivaut à un mem_free(ptr)
+  if (taille == 0) {
+    mem_free(ptr);
+    return NULL;
+  }
+
+  // Si ptr = NULL, cela équivaut à un mem_alloc(size)
+  if (ptr == NULL) {
+    return mem_alloc(taille);
+  }
+
+  // Récupère la taille actuelle de la zone allouée
+  size_t ancienne_taille = mem_get_size(ptr);
+
+  // Alloue une nouvelle zone de mémoire de taille size
+  void *nouveau_ptr = mem_alloc(taille);
+
+  if (nouveau_ptr != NULL) {
+    // Copie les données de l'ancienne zone vers la nouvelle zone
+    size_t taille_donnees_a_copier =
+        (ancienne_taille < taille) ? ancienne_taille : taille;
+
+    char *ancienne_data = (char *)ptr;
+    char *nouvelle_data = (char *)taille;
+
+    for (size_t i = 0; i < taille_donnees_a_copier; ++i) {
+      nouvelle_data[i] = ancienne_data[i];
+    }
+
+    // Libère l'ancienne zone
+    mem_free(ptr);
+  }
+
+  return nouveau_ptr;
+}
+
 //-------------------------------------------------------------
 // Itérateur(parcours) sur le contenu de l'allocateur
 // mem_show
