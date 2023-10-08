@@ -9,6 +9,8 @@
 #include "mem_space.h"
 #include <assert.h>
 
+#define TAILLE_GARDE 4
+
 typedef struct mem_free_block_s {
   size_t taille_total;
   void *ptr_next_free;
@@ -16,6 +18,8 @@ typedef struct mem_free_block_s {
 
 typedef struct mem_busy_block_s {
   size_t taille_total;
+  char garde_debut[TAILLE_GARDE];
+  char garde_fin[TAILLE_GARDE];
 } mem_busy_block_t;
 
 // Pointeur de fonction sur une des fit fonctions.
@@ -52,6 +56,13 @@ void mem_init() {
   gbl_alloc->actual_fit_function = &mem_first_fit; // ici qu'on change ??
   gbl_alloc->debut_mem = mem_space_get_addr() + sizeof(allocator_t);
   gbl_alloc->taille_tot_mem = mem_space_get_size();
+}
+
+void initialise_gardes(mem_busy_block_t *busy_block) {
+  for (size_t i = 0; i < TAILLE_GARDE; ++i) {
+    busy_block->garde_debut[i] = 0xAA;
+    busy_block->garde_fin[i] = 0xBB;
+  }
 }
 
 int mem_is_free(void *ptr) {
@@ -179,6 +190,9 @@ void *mem_alloc(size_t size) {
     // Marquer le bloc libre comme alloué
     mem_busy_block_t *busy_block = (mem_busy_block_t *)free_block;
     busy_block->taille_total = total_size_a_allouer;
+
+    initialise_gardes(busy_block);
+
     // Renvoyer l'adresse du bloc alloué (sans l'en-tête) à l'utilisateur
     return (void *)(busy_block + 1);
   }
@@ -244,6 +258,25 @@ void mem_free(void *zone) {
   mem_busy_block_t *busy_block =
       (mem_busy_block_t *)(zone - sizeof(mem_busy_block_t));
   mem_free_block_t *prev_block = gbl_alloc->first_free_block;
+
+  // Vérifier les gardes au début du bloc
+  for (size_t i = 0; i < TAILLE_GARDE; ++i) {
+    if (busy_block->garde_debut[i] != 0xAA) {
+      // Détection de débordement de mémoire au début du bloc
+      fprintf(stderr, "Débordement de mémoire au début du bloc.\n");
+      return;
+    }
+  }
+
+  for (size_t i = 0; i < TAILLE_GARDE; ++i) {
+    if (busy_block->garde_fin[i] != 0) {
+      // Détection de débordement de mémoire à la fin du bloc
+      fprintf(stderr, "Débordement de mémoire à la fin du bloc.\n");
+      return;
+    }
+  }
+
+  initialise_gardes(busy_block);
 
   // "Ecrase" le bloc alloué par un bloc libre
   mem_free_block_t *free_block = (mem_free_block_t *)busy_block;
