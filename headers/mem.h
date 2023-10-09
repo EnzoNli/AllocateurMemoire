@@ -17,9 +17,9 @@ void mem_free(void *);
 size_t mem_get_size(void *);
 
 /* Itérateur sur le contenu de l'allocateur */
-void mem_show(void (*print)(void *, size_t, int free));
+void mem_show(void (*print)(void *, size_t, int free, void *));
 
 /* Enable logging for debugging */
 void mem_set_logging(int enabled);
 
-#endif //MEM_H
+#endif // MEM_H
