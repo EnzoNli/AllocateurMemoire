@@ -15,8 +15,7 @@
 #define TAILLE_BUFFER 128
 #define MAX_ALLOCATIONS 128
 
-void aide()
-{
+void aide() {
     fprintf(stderr, "Aide :\n");
     fprintf(stderr, "Saisir l'une des commandes suivantes\n");
     fprintf(stderr, "\n");
@@ -38,26 +37,22 @@ void aide()
     fprintf(stderr, "\n");
 }
 
-void afficher_zone(void *adresse, size_t taille, int free, void *prochain_bloc_libre)
-{
-    printf("Zone %s, Adresse : %lu, Taille : %lu, Prochain bloc libre: %lu\n", free ? "libre" : "occupee",
-           (unsigned long)adresse, (unsigned long)taille, (unsigned long)prochain_bloc_libre);
+void afficher_zone(void *adresse, size_t taille, int free) {
+    printf("Zone %s, Adresse : %lu, Taille : %lu\n", free ? "libre" : "occupee",
+           (unsigned long)adresse, (unsigned long)taille);
 }
 
-void afficher_zone_libre(void *adresse, size_t taille, int free, void *prochain_bloc_libre)
-{
+void afficher_zone_libre(void *adresse, size_t taille, int free) {
     if (free)
-        afficher_zone(adresse, taille, 1, prochain_bloc_libre);
+        afficher_zone(adresse, taille, 1);
 }
 
-void afficher_zone_occupee(void *adresse, size_t taille, int free, void *prochain_bloc_libre)
-{
+void afficher_zone_occupee(void *adresse, size_t taille, int free) {
     if (!free)
-        afficher_zone(adresse, taille, 0, 0);
+        afficher_zone(adresse, taille, 0);
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     char buffer[TAILLE_BUFFER];
     char commande;
     char *adresse;
@@ -72,13 +67,11 @@ int main(int argc, char **argv)
     aide();
     mem_init();
 
-    while (1)
-    {
+    while (1) {
         fprintf(stderr, "? ");
         fflush(stdout);
         commande = getchar();
-        switch (commande)
-        {
+        switch (commande) {
         case 'a':
             scanf("%d", &taille);
             ptr = mem_alloc(taille);
