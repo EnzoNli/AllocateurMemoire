@@ -22,6 +22,10 @@ tests/test_frag
 tests/test_base_bzero
 tests/test_cheese_bzero
 tests/test_fusion_bzero
+tests/test_p_multithread
+tests/test_p_strat_base
+tests/test_p_realloc
+tests/test_p_cas_limite
 tests_c/test_base
 tests_c/test_base_bzero
 tests_c/test_cheese

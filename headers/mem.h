@@ -14,6 +14,7 @@
 /* -----------------------------------------------*/
 void *mem_alloc(size_t);
 void mem_free(void *);
+void *mem_realloc(void *, size_t);
 size_t mem_get_size(void *);
 
 /* Itérateur sur le contenu de l'allocateur */
