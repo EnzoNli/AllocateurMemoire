@@ -47,7 +47,6 @@ void mem_init()
 	gbl_alloc = mem_space_get_addr();
 
 	// on crée le premier bloc de mémoire libre
-	//(size + sizeof(mem_busy_block_t)+3)&~3;
 	mem_free_block_t *first = (mem_free_block_t *)(gbl_alloc + 1);
 	first->taille_total = mem_space_get_size() - sizeof(allocator_t);
 	first->ptr_next_free = NULL;
@@ -55,7 +54,7 @@ void mem_init()
 	// On initialise tous les attributs de l'allocateur
 	gbl_alloc->first_free_block = first;
 	gbl_alloc->actual_fit_function = &mem_first_fit;
-	gbl_alloc->debut_mem = mem_space_get_addr() + sizeof(allocator_t);
+	gbl_alloc->debut_mem = mem_space_get_addr();
 	gbl_alloc->taille_tot_mem = mem_space_get_size();
 }
 
@@ -118,7 +117,7 @@ void *mem_alloc(size_t size)
 	}
 
 	// Si l'utilisateur essaye d'allouer une taille plus grande que la taille de la mémoire => echec de l'allocation
-	if (total_size_a_allouer > mem_space_get_size() - sizeof(allocator_t) - sizeof(mem_busy_block_t))
+	if (total_size_a_allouer > gbl_alloc->taille_tot_mem - sizeof(allocator_t) - sizeof(mem_busy_block_t))
 	{
 		return NULL;
 	}
@@ -193,29 +192,18 @@ void *mem_alloc(size_t size)
 //-------------------------------------------------------------
 size_t mem_get_size(void *zone)
 {
-	// est ce que si espace libre après espace donné doit renvoyer l'addition de deux ?
 	size_t espace;
 	if (mem_is_free(zone) == 1)
 	{
-		mem_free_block_t *zone_testl = (mem_free_block_t *)zone;
-		espace = zone_testl->taille_total;
-		while (mem_is_free(zone_testl + zone_testl->taille_total) == 1)
-		{
-			zone_testl = zone_testl + zone_testl->taille_total;
-			espace += zone_testl->taille_total;
-		}
+		return 0;
 	}
 	else
 	{
 		mem_busy_block_t *zone_testb = (mem_busy_block_t *)zone;
-		espace = zone_testb->taille_total;
-		while (mem_is_free(zone_testb + zone_testb->taille_total) == 1)
-		{
-			zone_testb = zone_testb + zone_testb->taille_total;
-			espace += zone_testb->taille_total;
-		}
+		espace = zone_testb->taille_total-sizeof(mem_busy_block_t);
+		return espace;
 	}
-	return espace;
+	
 }
 
 //-------------------------------------------------------------
@@ -278,8 +266,8 @@ void fusion_blocs_libres(mem_free_block_t *free_block)
 //-------------------------------------------------------------
 void mem_show(void (*print)(void *, size_t, int free))
 {
-	void *curseur = mem_space_get_addr() + sizeof(allocator_t);
-	while (curseur < mem_space_get_addr() + gbl_alloc->taille_tot_mem)
+	void *curseur = gbl_alloc->debut_mem + sizeof(allocator_t);
+	while (curseur < gbl_alloc->debut_mem + gbl_alloc->taille_tot_mem)
 	{
 		if (mem_is_free(curseur))
 		{
@@ -346,7 +334,7 @@ void mem_free(void *zone)
 	}
 }
 
-void *mem_realloc(void *ptr, size_t taille)
+void *mem_realloc(void *ptr, size_t taille) // j'suis pas sur d'etre ok
 {
 	// Si size = zéro, cela équivaut à un mem_free(ptr)
 	if (taille == 0)
@@ -429,7 +417,7 @@ mem_free_block_t *mem_first_fit(mem_free_block_t *first_free_block, size_t wante
 		//  Vérifie si le bloc courant est suffisamment grand pour la taille demandée
 		if (current_block->taille_total >= wanted_size)
 		{
-			assert((void *)current_block >= mem_space_get_addr() && (void *)current_block < mem_space_get_addr() + mem_space_get_size());
+			assert((void *)current_block >= gbl_alloc->debut_mem && (void *)current_block < gbl_alloc->debut_mem + gbl_alloc->taille_tot_mem);
 			return current_block;
 		}
 		// Sinon on passe au bloc libre suivant

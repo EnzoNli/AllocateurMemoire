@@ -33,20 +33,17 @@ static int frag_best_fit()
 {
     int nb_alloc = 0;
 
-    assert((allocs[nb_alloc++] = mem_alloc(40000)) != NULL);
-    assert((allocs[nb_alloc++] = mem_alloc(20000)) != NULL);
-    assert((allocs[nb_alloc++] = mem_alloc(12000)) != NULL);
-    assert((allocs[nb_alloc++] = mem_alloc(36000)) != NULL);
+    assert((allocs[nb_alloc++] = mem_alloc(60000)) != NULL);
+    assert((allocs[nb_alloc++] = mem_alloc(19000)) != NULL);
+    assert((allocs[nb_alloc++] = mem_alloc(30000)) != NULL);
+    assert((allocs[nb_alloc++] = mem_alloc(18000)) != NULL);
 
-    mem_free(allocs[2]);
+    mem_free(allocs[1]);
+    mem_free(allocs[3]);
 
-    assert((allocs[nb_alloc++] = mem_alloc(18500)) != NULL);
-    assert((allocs[nb_alloc++] = mem_alloc(11450)) != NULL);
-
-    mem_free(allocs[0]);
-    assert((allocs[nb_alloc++] = mem_alloc(39500)) != NULL);
-
-    assert((allocs[nb_alloc++] = mem_alloc(2000)) == NULL);
+    assert((allocs[nb_alloc++] = mem_alloc(10000)) != NULL);
+    assert((allocs[nb_alloc++] = mem_alloc(13000)) != NULL);
+    assert((allocs[nb_alloc++] = mem_alloc(11000)) == NULL);
 
     return nb_alloc;
 }
@@ -55,20 +52,16 @@ static int frag_worst_fit()
 {
     int nb_alloc = 0;
 
-    assert((allocs[nb_alloc++] = mem_alloc(70000)) != NULL);
-    assert((allocs[nb_alloc++] = mem_alloc(30000)) != NULL);
-    assert((allocs[nb_alloc++] = mem_alloc(20000)) != NULL);
+    assert((allocs[nb_alloc++] = mem_alloc(42000)) != NULL);
+    assert((allocs[nb_alloc++] = mem_alloc(43000)) != NULL);
+    assert((allocs[nb_alloc++] = mem_alloc(42900)) != NULL);
 
+    mem_free(allocs[0]);
     mem_free(allocs[1]);
 
-    assert((allocs[nb_alloc++] = mem_alloc(16)) != NULL);
-    assert((allocs[nb_alloc++] = mem_alloc(6000)) != NULL);
-
-    mem_free(allocs[3]);
-    assert((allocs[nb_alloc++] = mem_alloc(23000)) != NULL);
-
-    assert((allocs[nb_alloc++] = mem_alloc(8000)) == NULL);
-
+    assert((allocs[nb_alloc++] = mem_alloc(30000)) != NULL);
+    assert((allocs[nb_alloc++] = mem_alloc(30000)) != NULL);
+    assert((allocs[nb_alloc++] = mem_alloc(30000)) == NULL);
     return nb_alloc;
 }
 
