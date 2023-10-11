@@ -9,8 +9,6 @@
 #include "mem_os.h"
 #include <assert.h>
 
-#define TAILLE_GARDE 4
-
 typedef struct mem_free_block_s
 {
 	size_t taille_total;
@@ -56,7 +54,7 @@ void mem_init()
 
 	// On initialise tous les attributs de l'allocateur
 	gbl_alloc->first_free_block = first;
-	gbl_alloc->actual_fit_function = &mem_first_fit; // ici qu'on change ??
+	gbl_alloc->actual_fit_function = &mem_first_fit;
 	gbl_alloc->debut_mem = mem_space_get_addr() + sizeof(allocator_t);
 	gbl_alloc->taille_tot_mem = mem_space_get_size();
 }
@@ -101,8 +99,11 @@ int mem_is_free(void *ptr)
  **/
 void *mem_alloc(size_t size)
 {
-	// Taille tot nécessaire pour le bloc alloué, y compris l'en-tête
-	//
+	// Taille tot nécessaire pour le bloc alloué, y compris l'en-tête & alignement
+	// Alignement de la taille sur 4 octets en utilisant un masque (3 en binaire
+	// est 11, ~3 sera donc 11111100 en binaire) On force donc les deux derniers
+	// bits de total_size_a_allouer à zéro, cela permet de s'assurer ainsi qu'il
+	// est aligné sur 4 octets.
 	size_t total_size_a_allouer = (size + sizeof(mem_busy_block_t) + 3) & ~3;
 	// size_t total_size_a_allouer = size + sizeof(mem_busy_block_t);
 	// size_t mod=total_size_a_allouer%4;
@@ -362,16 +363,31 @@ void *mem_realloc(void *ptr, size_t taille)
 
 	// Récupère la taille actuelle de la zone allouée
 	size_t ancienne_taille = mem_get_size(ptr);
-
 	// Alloue une nouvelle zone de mémoire de taille size
 	void *nouveau_ptr = mem_alloc(taille);
 
+	// Mettre à jour les pointeurs
+	mem_free_block_t *prec = gbl_alloc->first_free_block;
+	while (prec->ptr_next_free < (void *)ptr)
+	{
+		prec = prec->ptr_next_free;
+	}
+	prec->ptr_next_free = nouveau_ptr;
+
 	if (nouveau_ptr != NULL)
 	{
-		// Copie les données de l'ancienne zone vers la nouvelle zone
-		size_t taille_donnees_a_copier =
-			(ancienne_taille < taille) ? ancienne_taille : taille;
+		size_t taille_donnees_a_copier;
 
+		if (ancienne_taille < taille)
+		{
+			taille_donnees_a_copier = ancienne_taille;
+		}
+		else
+		{
+			taille_donnees_a_copier = taille;
+		}
+
+		// Copie les données de l'ancienne zone vers la nouvelle zone
 		char *ancienne_data = (char *)ptr;
 		char *nouvelle_data = (char *)taille;
 
@@ -444,7 +460,7 @@ mem_free_block_t *mem_best_fit(mem_free_block_t *first_free_block, size_t wanted
 	}
 	else
 	{
-		printf("Place insuffisante!!!");
+		// Place insuffisante
 		return NULL;
 	}
 	while (current_block != NULL)
@@ -485,7 +501,7 @@ mem_free_block_t *mem_worst_fit(mem_free_block_t *first_free_block, size_t wante
 	// sinon c'est qu'aucun espace libre ne permet d'allouer la place demandée
 	else
 	{
-		printf("Place insuffisante!!!");
+		// Place insuffisante
 		return NULL;
 	}
 	// on parcours l'ensemble des blocs libres à la recherche du plus grand pouvant stocker l'espace demandé
